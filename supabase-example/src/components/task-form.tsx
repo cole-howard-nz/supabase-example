@@ -2,16 +2,17 @@
 import { createTask } from "@/lib/actions"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
-import { FormEvent, useState } from "react"
+import { useState } from "react"
 
 const TaskForm = () => {
-  const [task, setTask] = useState<TaskType>({ name: '', description: ''})
+  const [task, setTask] = useState<NewTaskType>({ name: '', description: ''})
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault()
     await createTask(task)
     setTask({ name: '', description: '' })
   }
+
   return (
     <form 
       onSubmit={ handleSubmit } 
@@ -28,13 +29,13 @@ const TaskForm = () => {
         <Input 
           type='text' 
           name='description'
-          className='text-sm'
+          className='text-sm mb-1'
           value={ task.description }
           placeholder='Enter a description for this task'
           onChange={ e => setTask(prev => ({...prev, description: e.target.value}))}
           required/>
 
-        <Button type='submit' className='my-2 w-full'>Add to list</Button>
+        <Button type='submit' className='my- w-full'>Add to list</Button>
     </form>
   )
 }
