@@ -5,10 +5,9 @@ import { Input } from "./ui/input"
 import { useState } from "react"
 
 const TaskForm = () => {
-  const [task, setTask] = useState<NewTaskType>({ name: '', description: ''})
+  const [task, setTask] = useState({ name: '', description: ''})
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault()
+  const handleSubmit = async () => {
     await createTask(task)
     setTask({ name: '', description: '' })
   }

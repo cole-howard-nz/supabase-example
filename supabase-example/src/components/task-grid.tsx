@@ -1,14 +1,18 @@
 'use client'
-import { deleteTask, getTasks } from "@/lib/actions"
+import { deleteTask, editTask, getTasks } from "@/lib/actions"
 import {
   Card,
   CardContent,
 } from "@/components/ui/card"
 import { useEffect, useState } from "react"
 import { Button } from "./ui/button"
+import { NewTaskType, TaskType } from "@/types/task.type"
+import { Input } from "./ui/input"
 
 const TaskGrid = () => {
-  const [tasks, setTasks] = useState<TaskType[] | null>()
+  const [tasks, setTasks] = useState<TaskType[] | null>(null)
+  const [newTask, setNewTask] = useState<NewTaskType>({ name: '', description: '' })
+  const [bEdit, setEdit] = useState<number>(-1)
 
   const handleGetTasks = async () => {
     setTasks(await getTasks())
@@ -19,7 +23,15 @@ const TaskGrid = () => {
     handleGetTasks()
   }
 
-  const handleEditTask = async (task_id: number) => {
+  const handleEditTask = async (task: TaskType) => {
+    bEdit === task.id ? setEdit(-1) : setEdit(task.id)
+    setNewTask(task)
+    handleGetTasks()
+  }
+
+  const handleUpdateTask = async (task_id: number) => {
+    setEdit(-1)
+    await editTask(newTask, task_id)
     handleGetTasks()
   }
 
@@ -27,30 +39,65 @@ const TaskGrid = () => {
     handleGetTasks()
   }, [])
 
-  console.log(tasks)
-
   return (
     <section className='flex flex-col space-y-2 mt-4 items-center justify-center'>
+      {(tasks && tasks.length === 0) && <p className='text-sm'>No tasks to list, create one above</p>}
+
       {tasks && tasks.map((task, i) =>
         <Card key={i} className='overflow-hidden pb-0 w-100'>
           <CardContent>
-            <p>{task.name}</p>
-            <p>{task.description}</p>
+            {
+                bEdit === task.id ? 
+                <>
+                   <Input 
+                    type='text' 
+                    name='name'
+                    className='text-sm mb-1'
+                    value={ newTask?.name }
+                    onChange={ e => setNewTask(prev => ({...prev, name: e.target.value}))}
+                    required/>
+
+                  <Input 
+                    type='text' 
+                    name='description'
+                    className='text-sm mb-1'
+                    value={ newTask?.description }
+                    onChange={ e => setNewTask(prev => ({...prev, description: e.target.value}))}
+                    required/>
+                </>
+                :
+                <>
+                  <p>{task.name}</p>
+                  <p>{task.description}</p>
+                </>
+            }
+            
 
             <div className='flex justify-center items-center pt-6'>
               <Button 
                 className='w-50 rounded-[0]' 
                 variant={'secondary'}
-                onClick={ () => handleEditTask(task.id) }>
+                onClick={ () => handleEditTask(task) }>
                   Edit
               </Button>
 
-              <Button 
-                className='w-50 rounded-[0]' 
-                variant={'secondary'}
-                onClick={ () => handleDeleteTask(task.id) }>
-                  Delete
-              </Button>
+              {
+                bEdit === task.id ? 
+                <Button 
+                  className='w-50 rounded-[0]' 
+                  variant={'secondary'}
+                  onClick={ () => handleUpdateTask(task.id) }>
+                    Save
+                </Button>
+                : 
+                <Button 
+                  className='w-50 rounded-[0]' 
+                  variant={'destructive'}
+                  onClick={ () => handleDeleteTask(task.id) }>
+                    Delete
+                </Button>  
+              }
+              
             </div>
           </CardContent>
         </Card>
