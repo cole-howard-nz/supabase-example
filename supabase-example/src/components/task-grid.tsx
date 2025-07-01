@@ -8,6 +8,7 @@ import { useEffect, useState } from "react"
 import { Button } from "./ui/button"
 import { NewTaskType, TaskType } from "@/types/task.type"
 import { Input } from "./ui/input"
+import Image from "next/image"
 
 const TaskGrid = () => {
   const [tasks, setTasks] = useState<TaskType[] | null>(null)
@@ -66,10 +67,16 @@ const TaskGrid = () => {
                     required/>
                 </>
                 :
-                <>
-                  <p>{task.name}</p>
-                  <p>{task.description}</p>
-                </>
+                <div className='grid grid-cols-2 gap-4'>
+                  <div>
+                    <p>{task.name}</p>
+                    <p>{task.description}</p>
+                  </div>
+                  
+                  <img
+                    className='w-20 h-20 m-auto' 
+                    src={task.image_url || ''} />
+                </div>
             }
             
 

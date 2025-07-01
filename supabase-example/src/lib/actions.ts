@@ -4,7 +4,10 @@ import { supabase } from "./supabase"
 
 
 export const createTask = async (task: NewTaskType) => {
-  const { error, data } = await supabase.from('tasks').insert(task).select().single()
+  const { file, ...task_data } = task
+
+  console.log(task_data)
+  const { error, data } = await supabase.from('tasks').insert(task_data).select().single()
   if (error) {
     console.error('Error: lib/actions.ts:createTask --', error)
   }
@@ -34,4 +37,17 @@ export const editTask = async (new_task: NewTaskType, task_id: number) => {
   if (error) {
     console.error('Error: lib/actions.ts:editTask --', error)
   }
+}
+
+export const uploadImage = async (file: File): Promise<string | null> => {
+  const filePath = `${file.name}-${Date.now()}`
+  const { error } = await supabase.storage.from('tasks-images').upload(filePath, file)
+
+  if (error) {
+    console.error('Error: lib/actions.ts:uploadImage --', error)
+    return null
+  }
+
+  const { data } = await supabase.storage.from('tasks-images').getPublicUrl(filePath)
+  return data.publicUrl
 }
