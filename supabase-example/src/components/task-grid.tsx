@@ -9,6 +9,7 @@ import { Button } from "./ui/button"
 import { NewTaskType, TaskType } from "@/types/task.type"
 import { Input } from "./ui/input"
 import Image from "next/image"
+import { Textarea } from "./ui/textarea"
 
 const TaskGrid = () => {
   const [tasks, setTasks] = useState<TaskType[] | null>(null)
@@ -50,7 +51,7 @@ const TaskGrid = () => {
             {
                 bEdit === task.id ? 
                 <>
-                   <Input 
+                  <Input 
                     type='text' 
                     name='name'
                     className='text-sm mb-1'
@@ -58,8 +59,7 @@ const TaskGrid = () => {
                     onChange={ e => setNewTask(prev => ({...prev, name: e.target.value}))}
                     required/>
 
-                  <Input 
-                    type='text' 
+                  <Textarea 
                     name='description'
                     className='text-sm mb-1'
                     value={ newTask?.description }
@@ -69,8 +69,8 @@ const TaskGrid = () => {
                 :
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <p>{task.name}</p>
-                    <p>{task.description}</p>
+                    <p className='font-semibold leading-5 mb-2'>{task.name}</p>
+                    <p className='text-sm leading-4 text-cov'>{task.description}</p>
                   </div>
                   
                   <img
